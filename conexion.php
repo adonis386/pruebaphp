@@ -1,62 +1,38 @@
 <?php
+// Esta clase se encarga de conectarse a la base de datos.
+// La uso en otras clases para no repetir el código de conexión en cada archivo
 class Conexion {
-    private string $host = "localhost";
-    private string $db = "concesionario_db";
-    private string $user = "root"; // Usuario por defecto de XAMPP
-    private string $password = ""; // Contraseña por defecto de XAMPP (vacía)
+    private string $host     = "localhost";
+    private string $db       = "concesionario_db";
+    private string $user     = "root"; // usuario por defecto de XAMPP
+    private string $password = "";    // en XAMPP la contraseña de root viene vacía
     private PDO $conexion;
 
     public function __construct() {
         try {
+            // El DSN es básicamente la "dirección" de la base de datos
             $dsn = "mysql:host={$this->host};dbname={$this->db};charset=utf8mb4";
-            // Validación mínima del DSN
+
+            // Me aseguro de que el DSN sea válido antes de conectar
             if (!is_string($dsn) || trim($dsn) === '') {
                 die("DSN inválido: " . var_export($dsn, true));
             }
-            // Instanciamos el objeto PDO nativo de PHP con opciones recomendadas
+
+            // Creo la conexión PDO con algunas opciones que mejoran el manejo de errores
             $this->conexion = new PDO($dsn, $this->user, $this->password, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false,
+                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, // que lance excepciones si hay error
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,       // que devuelva arrays asociativos
+                PDO::ATTR_EMULATE_PREPARES   => false,                  // mejor seguridad
             ]);
         } catch (PDOException $e) {
+            // Si algo falla, muestro el error para saber qué pasó
             die("Error de conexión a la base de datos: " . $e->getMessage() . " -- DSN: " . var_export(isset($dsn) ? $dsn : null, true));
         }
     }
 
-    // Método para exponer la conexión a otras clases
+    // Con este método le paso la conexión a cualquier clase que la necesite
     public function getConexion(): PDO {
         return $this->conexion;
     }
 }
-
-
-
-// 1. Datos de configuración
-//$host = 'localhost';
-//$db   = 'nombre_de_tu_bd';
-//$user = 'usuario';
-//$pass = 'contraseña';
-//$charset = 'utf8mb4';
-
-// 2. Definir el DSN (Data Source Name)
-//$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-
-// 3. Opciones de configuración de PDO
-//$options = [
-//    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, // Activa el reporte de errores
-//    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,       // Devuelve los datos como array asociativo
-//    PDO::ATTR_EMULATE_PREPARES   => false,                  // Desactiva la emulación para mayor seguridad
-//];
-
-//try {
-    // 4. Intento de conexión
-//    $pdo = new PDO($dsn, $user, $pass, $options);
-//    echo "Conexión exitosa";
-//} catch (\PDOException $e) {
-//    // 5. Manejo de errores en caso de fallo
-//    throw new \PDOException($e->getMessage(), (int)$e->getCode());
-//}
-
-
 ?>

@@ -1,9 +1,9 @@
 <?php
-// Camion extiende Vehiculo (herencia) e implementa todos sus métodos abstractos,
-// incluido getEtiqueta() de la interface Vendible.
+// Camion hereda de Vehiculo igual que Coche y Motocicleta.
+// Su atributo especial es la capacidad de carga en kilogramos
 class Camion extends Vehiculo {
 
-    private float $capacidadCarga; // kg — atributo privado, encapsulamiento
+    private float $capacidadCarga; // lo pongo private para que nadie lo cambie desde fuera
 
     public function __construct(
         string $marca,
@@ -11,30 +11,31 @@ class Camion extends Vehiculo {
         float  $precio,
         float  $capacidadCarga
     ) {
-        parent::__construct($marca, $modelo, $precio);
+        parent::__construct($marca, $modelo, $precio); // inicializo los datos del padre
         $this->capacidadCarga = $capacidadCarga;
     }
 
-    // Getter para acceso controlado al atributo privado
+    // Como el atributo es privado, necesito un getter para poder leerlo desde fuera
     public function getCapacidadCarga(): float {
         return $this->capacidadCarga;
     }
 
-    // Polimorfismo: sobreescribe mostrarDetalles() con representación propia
+    // Sobreescribo mostrarDetalles() para que muestre la capacidad en lugar de puertas o cilindrada
     public function mostrarDetalles(): string {
         return "Camión: {$this->marca} {$this->modelo} — Capacidad: " .
                number_format($this->capacidadCarga, 0, ',', '.') . " kg";
     }
 
-    // Implementación del método abstracto getEtiqueta() (requerida por Vendible)
+    // Este método lo exige la interface Vendible a través de Vehiculo,
+    // devuelve una etiqueta con el tipo y la capacidad del camión
     public function getEtiqueta(): string {
         return "🚚 Camión · " . number_format($this->capacidadCarga, 0, ',', '.') . " kg de carga";
     }
 
-    // Implementación del método abstracto obtenerHtml() (requerida por Vehiculo)
+    // Genero el HTML de la tarjeta para mostrarlo en la página principal
     public function obtenerHtml(): string {
         $precioFmt     = number_format($this->precio, 2);
-        $descuentoFmt  = number_format($this->calcularDescuento(10), 2);
+        $descuentoFmt  = number_format($this->calcularDescuento(10), 2); // calculo el 10% de descuento
         $capacidadFmt  = number_format($this->capacidadCarga, 0, ',', '.');
 
         return "
